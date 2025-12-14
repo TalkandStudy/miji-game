@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2025 WaspSquidW
+# Licensed under the MIT License: https://opensource.org/licenses/MIT
+
+
 import pygame
 import sys
 import random
@@ -7,13 +12,10 @@ import urllib.request
 import zipfile
 import shutil
 
-# ===================== 资源下载解压配置 =====================
-# 替换为你自己的资源压缩包URL
-RESOURCE_URL = "https://github.com/TalkandStudy/miji-game/raw/refs/heads/main/mj.data.zip"  # 自定义URL
-RESOURCE_ZIP_NAME = "mj_data_temp.zip"  # 临时压缩包文件名
-TARGET_DIR = "mj_data"  # 目标文件夹
+RESOURCE_URL = "https://github.com/TalkandStudy/miji-game/raw/refs/heads/main/mj.data.zip" 
+RESOURCE_ZIP_NAME = "mj_data_temp.zip"
+TARGET_DIR = "mj_data"
 
-# ===================== 自动下载解压资源函数 =====================
 def download_and_extract_resources():
     """检测资源文件夹，不存在则下载压缩包并解压"""
     # 检查目标文件夹是否存在
@@ -50,7 +52,6 @@ def download_and_extract_resources():
             os.remove(RESOURCE_ZIP_NAME)
         return False
 
-# ===================== 初始化Pygame =====================
 # 先下载解压资源
 if not download_and_extract_resources():
     print("资源加载失败，游戏无法运行！")
@@ -78,7 +79,6 @@ BROWN = (139, 69, 19)       # 陆地颜色
 GREEN_CAMP = (34, 139, 34)  # 军营颜色
 ORANGE = (255, 165, 0)      # 主炮炮弹颜色
 
-# ===================== 加载图片资源（路径改为mj_data/） =====================
 try:
     # 近防炮图片
     cannon_img = pygame.image.load(f"{TARGET_DIR}/jfp.png").convert_alpha()
@@ -134,7 +134,6 @@ except FileNotFoundError as e:
     cannon_sound = None
     main_cannon_sound = None
 
-# ===================== 子弹类（寿命改为30） =====================
 class Bullet:
     def __init__(self, x, y, angle, color=LIGHT_BLUE):
         self.x = x
@@ -142,7 +141,7 @@ class Bullet:
         self.speed = 15
         self.angle = angle
         self.radius = 3
-        self.lifetime = 80  # 子弹寿命改为30
+        self.lifetime = 80  
         self.active = True
         self.color = color
 
@@ -157,7 +156,7 @@ class Bullet:
     def draw(self):
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
 
-# ===================== 主炮炮弹类（范围攻击） =====================
+
 class MainCannonShell:
     def __init__(self, x, y, angle):
         self.x = x
@@ -213,10 +212,10 @@ class MainCannonShell:
             # 绘制炮弹
             pygame.draw.circle(screen, ORANGE, (int(self.x), int(self.y)), self.radius)
 
-# ===================== 来袭导弹类 =====================
+
 class EnemyMissile:
     def __init__(self):
-        # 随机生成初始位置（屏幕边缘）
+        # 随机生成初始位置
         side = random.choice(["top", "bottom", "left", "right"])
         if side == "top":
             self.x = random.randint(0, WIDTH)
@@ -253,7 +252,7 @@ class EnemyMissile:
         rect = rotated_missile.get_rect(center=(self.x, self.y))
         screen.blit(rotated_missile, rect)
 
-# ===================== 军营类（可攻击目标） =====================
+
 class Camp:
     def __init__(self):
         # 军营位置（陆地区域随机）
@@ -279,7 +278,7 @@ class Camp:
                             (self.x - self.width//2, self.y - self.height//2, 
                              self.width, self.height), 2)
 
-# ===================== 防空导弹类（自动锁定+放大尺寸） =====================
+
 class AntiMissile:
     def __init__(self, x, y, target_list):
         self.x = x
@@ -344,7 +343,7 @@ class AntiMissile:
         rect = rotated_am.get_rect(center=(self.x, self.y))
         screen.blit(rotated_am, rect)
 
-# ===================== 近防炮类（子弹计数+装填+音效） =====================
+
 class Cannon:
     def __init__(self, x, y):
         self.x = x
@@ -419,7 +418,7 @@ class Cannon:
         text_surface = font.render(ammo_text, True, WHITE)
         screen.blit(text_surface, (self.x - 50, self.y + 50))
 
-# ===================== 主炮类（范围攻击） =====================
+
 class MainCannon:
     def __init__(self, x, y):
         self.x = x
@@ -485,7 +484,7 @@ class MainCannon:
         text_surface = font.render(ammo_text, True, WHITE)
         screen.blit(text_surface, (self.x - 70, self.y + 60))
 
-# ===================== 发射箱类（防空导弹计数+装填） =====================
+
 class Launcher:
     def __init__(self, x, y):
         self.x = x
@@ -526,7 +525,7 @@ class Launcher:
         text_surface = font.render(ammo_text, True, WHITE)
         screen.blit(text_surface, (self.x - 60, self.y + 40))
 
-# ===================== 绘制陆地和军营 =====================
+
 def draw_land_and_camps(camps):
     """绘制顶部棕色陆地和绿色军营"""
     # 绘制棕色陆地（顶部长条）
@@ -539,7 +538,7 @@ def draw_land_and_camps(camps):
     for camp in camps:
         camp.draw()
 
-# ===================== 绘制船底（带晃动动画） =====================
+
 def draw_ship(ship_x_base, ship_y_base, shake_offset):
     """绘制船底图片（带轻微晃动）"""
     # 应用晃动偏移
@@ -548,7 +547,7 @@ def draw_ship(ship_x_base, ship_y_base, shake_offset):
     screen.blit(ship_img, (ship_x, ship_y))
     return ship_x, ship_y
 
-# ===================== 主游戏逻辑 =====================
+
 def main():
     clock = pygame.time.Clock()
     
@@ -757,4 +756,5 @@ def main():
     sys.exit()
 
 if __name__ == "__main__":
+
     main()
